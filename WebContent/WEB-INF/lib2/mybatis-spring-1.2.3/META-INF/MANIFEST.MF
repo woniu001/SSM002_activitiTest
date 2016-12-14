@@ -1,0 +1,59 @@
+Manifest-Version: 1.0
+Export-Package: org.mybatis.spring;version="1.2.3",org.mybatis.spring.
+ annotation;version="1.2.3",org.mybatis.spring.batch;version="1.2.3",o
+ rg.mybatis.spring.config;version="1.2.3",org.mybatis.spring.mapper;ve
+ rsion="1.2.3",org.mybatis.spring.support;version="1.2.3",org.mybatis.
+ spring.transaction;version="1.2.3"
+Implementation-Title: mybatis-spring
+Built-By: eduardo
+Implementation-Build-Date: 2015-06-15 05:21:20+0000
+Tool: Bnd-2.3.0.201405100607
+Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.6))"
+Implementation-Vendor: MyBatis.org
+Implementation-Vendor-Id: org.mybatis
+Specification-Title: mybatis-spring
+Bundle-License: http://www.apache.org/licenses/LICENSE-2.0.txt
+Bundle-SymbolicName: org.mybatis.mybatis-spring
+X-Compile-Target-JDK: 1.6
+Implementation-Version: 1.2.3
+Specification-Vendor: MyBatis.org
+Bundle-Name: mybatis-spring
+Created-By: Apache Maven Bundle Plugin
+Implementation-URL: http://www.mybatis.org/spring/
+X-Compile-Source-JDK: 1.6
+Bundle-Vendor: MyBatis.org
+DynamicImport-Package: *
+Bundle-Version: 1.2.3
+Build-Jdk: 1.7.0_75
+Bnd-LastModified: 1434345688274
+Bundle-ManifestVersion: 2
+Bundle-Description: An easy-to-use Spring3 bridge for MyBatis sql mapp
+ ing framework.
+Include-Resource: META-INF/NOTICE=NOTICE,META-INF/LICENSE=LICENSE,META
+ -INF/spring.handlers=src/main/java/META-INF/spring.handlers,META-INF/
+ spring.schemas=src/main/java/META-INF/spring.schemas,org/mybatis/spri
+ ng/config/mybatis-spring-1.2.xsd=src/main/java/org/mybatis/spring/con
+ fig/mybatis-spring-1.2.xsd
+Import-Package: org.springframework.batch.item;resolution:=optional,or
+ g.springframework.batch.item.database;resolution:=optional,javax.sql,
+ org.apache.commons.logging,org.apache.ibatis.builder.xml,org.apache.i
+ batis.exceptions,org.apache.ibatis.executor,org.apache.ibatis.logging
+ ,org.apache.ibatis.mapping,org.apache.ibatis.plugin,org.apache.ibatis
+ .reflection,org.apache.ibatis.reflection.factory,org.apache.ibatis.re
+ flection.wrapper,org.apache.ibatis.session,org.apache.ibatis.transact
+ ion,org.apache.ibatis.type,org.springframework.beans,org.springframew
+ ork.beans.factory,org.springframework.beans.factory.annotation,org.sp
+ ringframework.beans.factory.config,org.springframework.beans.factory.
+ support,org.springframework.beans.factory.xml,org.springframework.con
+ text,org.springframework.context.annotation,org.springframework.conte
+ xt.event,org.springframework.context.support,org.springframework.core
+ ,org.springframework.core.annotation,org.springframework.core.io,org.
+ springframework.core.type,org.springframework.core.type.classreading,
+ org.springframework.core.type.filter,org.springframework.dao,org.spri
+ ngframework.dao.support,org.springframework.jdbc.datasource,org.sprin
+ gframework.jdbc.support,org.springframework.transaction.support,org.s
+ pringframework.util,org.w3c.dom
+Bundle-DocURL: http://www.mybatis.org/spring/
+Specification-Version: 1.2.3
+Archiver-Version: Plexus Archiver
+

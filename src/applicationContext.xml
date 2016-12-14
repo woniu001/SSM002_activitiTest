@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd 
+    http://www.springframework.org/schema/aop 
+    http://www.springframework.org/schema/aop/spring-aop-3.0.xsd 
+    http://www.springframework.org/schema/tx
+    http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context-4.2.xsd">
+    
+
+	<!-- 开启自动扫包 -->
+	<context:component-scan base-package="com.wbliu.SSM002">
+		<!--制定扫包规则，不扫描@Controller注解的JAVA类，其他的还是要扫描 -->
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+	</context:component-scan>
+
+
+<!-- 该 BeanPostProcessor 将自动对标注 @Autowired 的 Bean 进行注入 -->     
+  <bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"/>  
+
+
+
+	<!-- 启动AOP支持 -->
+	<!-- <aop:aspectj-autoproxy /> -->
+
+	<!-- 引入外部数据源配置信息 -->
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<value>classpath:datasource.properties</value>
+		</property>
+	</bean>
+
+	<!-- 配置数据源 -->
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="${jdbc.driver}"></property>
+		<property name="url" value="${jdbc.url}"></property>
+		<property name="username" value="${jdbc.username}"></property>
+		<property name="password" value="${jdbc.password}"></property>
+	</bean>
+
+
+<!-- <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" >
+  <property name="driverClassName" value="com.mysql.jdbc.Driver" />
+  <property name="url" value="jdbc:mysql://localhost:3306/db_activiti" />
+  <property name="username" value="root" />
+  <property name="password" value="password" />
+  <property name="defaultAutoCommit" value="false" />
+</bean>
+ -->
+
+
+
+	<!-- 配置Session工厂 -->
+	<!-- <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean"> -->
+		<!-- <property name="dataSource" ref="dataSource"></property> -->
+		<!-- 加载mybatis.cfg.xml文件 -->
+		<!-- <property name="configLocation" value="classpath:mybatis.cfg.xml"></property> -->
+		<!-- 自动扫描需要定义类别名的包，将包内的JAVA类的类名作为类别名 -->
+		<!-- <property name="typeAliasesPackage" value="com.wbliu.SSM002.beans"></property> -->
+	<!-- </bean> -->
+
+	<!-- 自动扫描所有的Mapper接口与文件 
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.wbliu.SSM002.mapper"></property>
+	</bean>-->
+
+
+	<!-- 配置事务管理器-->
+	<!-- <bean id="txManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean> 
+ -->
+	<!-- 定义个通知，指定事务管理器 
+	<tx:advice id="txAdvice" transaction-manager="txManager">
+
+		<tx:attributes>
+			<tx:method name="delete*" propagation="REQUIRED" read-only="false"
+				rollback-for="java.lang.Exception" />
+			<tx:method name="save*" propagation="REQUIRED" read-only="false"
+				rollback-for="java.lang.Exception" />
+			<tx:method name="insert*" propagation="REQUIRED" read-only="false"
+				rollback-for="java.lang.Exception" />
+			<tx:method name="update*" propagation="REQUIRED" read-only="false"
+				rollback-for="java.lang.Exception" />
+			<tx:method name="load*" propagation="SUPPORTS" read-only="true" />
+			<tx:method name="find*" propagation="SUPPORTS" read-only="true" />
+			<tx:method name="search*" propagation="SUPPORTS" read-only="true" />
+			<tx:method name="select*" propagation="SUPPORTS" read-only="true" />
+			<tx:method name="get*" propagation="SUPPORTS" read-only="true" />
+		</tx:attributes>
+
+	</tx:advice>-->
+
+	<!-- 配置一个切入点
+	<aop:config>
+		<aop:pointcut id="serviceMethods"
+			expression="execution(* com.wbliu.SSM002.service.impl.*ServiceImpl.*(..))" />
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="serviceMethods" />
+	</aop:config>
+ -->
+
+
+
+
+ <bean id="processEngineConfiguration" class="org.activiti.spring.SpringProcessEngineConfiguration">
+	<!-- <bean id="processEngineConfiguration" class="org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration"> -->
+	<!--  <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/db_activiti?useSSL=false"/> 
+	 <property name="jdbcDriver" value="com.mysql.jdbc.Driver"/> 
+	 <property name="jdbcUsername" value="root"/>
+	  <property name="jdbcPassword" value="password"/> 
+	 -->
+	<!-- 自动构建数据库表，设置value="true"，第一次启动建表；设置value="drop-create"，每次启动时建新表 -->
+
+	<property name="dataSource" ref="dataSource" />
+    <property name="transactionManager" ref="transactionManager" />
+	<!-- 设置数据库schema的更新方式 -->
+    <property name="databaseSchemaUpdate" value="true" />
+    <!-- 是否启动jobExecutor -->
+    <property name="jobExecutorActivate" value="false" />
+    
+    <!-- 自动资源部署（Automatic resource deploy） -->
+  <!-- <property name="deploymentResources" value="classpath*:activiti/diagrams/helloWorld.bpmn"/> -->
+    
+</bean>
+
+
+<!-- 配置activiti的引擎  start-->
+<bean id="processEngine" class="org.activiti.spring.ProcessEngineFactoryBean">
+  <property name="processEngineConfiguration" ref="processEngineConfiguration" />
+</bean>
+
+<!-- 创建activiti提供的各种服务 -->
+  <!-- 工作流仓储服务 -->
+  <bean id="repositoryService" factory-bean="processEngine" factory-method="getRepositoryService" />
+  <!-- 工作流运行服务 -->
+  <bean id="runtimeService" factory-bean="processEngine" factory-method="getRuntimeService" />
+  <!--  工作流任务服务-->
+  <bean id="taskService" factory-bean="processEngine" factory-method="getTaskService" />
+  <!--  工作流历史数据服务-->
+  <bean id="historyService" factory-bean="processEngine" factory-method="getHistoryService" />
+  <!--  工作流管理服务-->
+  <bean id="managementService" factory-bean="processEngine" factory-method="getManagementService" />
+  <!-- 工作流唯一服务 -->
+  <bean id="IdentityService" factory-bean="processEngine" factory-method="getIdentityService" />
+
+
+
+
+
+ <!-- 创建一个事物管理器 -->
+  <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+    <property name="dataSource" ref="dataSource" />
+  </bean> 
+
+</beans>

@@ -1,85 +1,89 @@
-
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%
 	String path = request.getContextPath();
-	String basePath = request.getScheme() + "://"
-			+ request.getServerName() + ":" + request.getServerPort()
-			+ path + "/";
+	String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
+			+ path;
+	/* 			+ path + "/"; */
 %>
-
 <!DOCTYPE html>
 <html lang="zh-cn">
 <base href="<%=basePath%>">
 
-<title>Activiti Test</title>
+<title>请假审批流程测试</title>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
 <!-- 新 Bootstrap 核心 CSS 文件 -->
-<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
+<link rel="stylesheet"
+	href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
 <!-- 可选的Bootstrap主题文件（一般不用引入） -->
-<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap-theme.min.css">
+<link rel="stylesheet"
+	href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap-theme.min.css">
 
 </head>
 <body>
 	<div class="page-header">
-		<h2>activiti集成spring测试</h2>
+		<h2>请假审批流程测试</h2>
 	</div>
-	
-	<p>
-		<button type="button" class="btn btn-lg btn-primary" id="btnDeployMent">deployment</button>
-		<button type="button" class="btn btn-lg btn-primary" id="btnDeployMentWithZIP">deployMentWithZIP</button>
-		<button type="button" class="btn btn-lg btn-default" id="binStart">启动流程</button>
-		<button type="button" class="btn btn-lg btn-default" id="findTask">findTask</button>
-		<button type="button" class="btn btn-lg btn-default" id="completeTask">completeTask</button>
-	</p>
-  <p>
-		<button type="button" class="btn btn-lg btn-success" id="findProcessDefinition">findProcessDefinition</button>
-		<button type="button" class="btn btn-lg btn-success" id="findLastProcessDefinition">findLastProcessDefinition</button>
-		<button type="button" class="btn btn-lg btn-warning" id="deleteProcessDefinition">deleteProcessDefinition</button>
-		<button type="button" class="btn btn-lg btn-warning" id="deleteProcessDefinitionByKey">deleteProcessDefinitionByKey</button>
-</p>
+	<br>
 
-	<p>
-		<button type="button" class="btn btn-lg btn-default" id="queryProcessImage">queryProcessImage</button>
-		<button type="button" class="btn btn-lg btn-default" id="isProcessEnd">isProcessEnd</button>
-		<button type="button" class="btn btn-lg btn-default" id="findHistoryTask">findHistoryTask</button>
-		<button type="button" class="btn btn-lg btn-default" id="findHistoryProcessInstance">findHistoryProcessInstance</button>
-	</p>
+	<div class="container">
+		<div class="row">
+			<p>
+				<button type="button" id="deployMent" class="btn btn-success">部署流程(仅执行一次)</button>
+			</p>
+		</div>
 
-	<p>
-	          <h2>ExclusiveGateWay Test </h2>
-	<!-- ExclusiveGateWay Test -->
-		<button type="button" class="btn btn-lg btn-success" id="deployment">deployment</button>
-		<button type="button" class="btn btn-lg btn-success" id="startProcessInstance">startProcessInstance</button>
-		<button type="button" class="btn btn-lg btn-success" id="getPersionalTaskMessage">getPersionalTaskMessage</button>
-		<button type="button" class="btn btn-lg btn-success" id="completeMyPersonalTask">completeMyPersonalTask</button>
+		<div class="row">
+		<div class="col-sm-4">
+		     <p> 流程审批描述：</p>
+		       <textarea rows="10" cols="20" id ="processDescribe"  disabled="disabled" readonly="readonly"></textarea>
+		</div>
+		</div>
 		
-		<!-- <button type="button" class="btn btn-lg btn-default" id="findHistoryTask">findHistoryTask</button>
-		<button type="button" class="btn btn-lg btn-default" id="findHistoryProcessInstance">findHistoryProcessInstance</button> -->
-	</p>
+		<div class="row">
+		
+		<div class="col-sm-8">
+				<div class="form">
+					<p>
+					<h2>填写请假单</h2>
+					</p>
+					<p>
+						姓名 ：<input type="text" name="name" id="name">
+					</p>
+					<p>
+						请假天数 ：<input type="text" name="day" id="day">
+					</p>
+ 					<p>
+						请假原因 ：
+					</p>
+						<textarea rows="5" cols="10"></textarea>
+					<p>
+						<button type="button" class="btn btn-success" id="submit">提交</button>
+					</p>
+				</div>
 
 
-<h2>PARALLEL GATEWAY TEST</h2>
-<p>
-		<button type="button" class="btn btn-lg btn-warning" id="parallelGatewayDeploymentProcess">parallelGatewayDeploymentProcess</button>
-		<button type="button" class="btn btn-lg btn-warning" id="parallelGatewayStartProcessInstance">parallelGatewayStartProcessInstance</button>
-		<button type="button" class="btn btn-lg btn-warning" id="parallelGatewayFindMyPersonalTask">parallelGatewayFindMyPersonalTask</button>
-		<button type="button" class="btn btn-lg btn-warning" id="parallelGatewayCompleteMyTask">parallelGatewayCompleteMyTask</button>
+				<!-- 展示流程进度 -->
+				<div id="ProcessImage"></div>
+
+				<!-- 展示审批人 -->
+				<div id="shenPi"></div>
+
+				<!-- <button type="button" onclick="showProcess()">查看流程图</button> -->
+			</div>
+			<!-- end col-sm-4 -->
+		</div>
+		<!-- end row -->
+
+	</div>
+	<!-- end container -->
 
 
-</p>
 
 
-
-
-<h2>SHOW PROCESS</h2>
-<p>
-		<button type="button" class="btn btn-lg btn-warning" id="showProcess">showProcess</button>
-<div id ="showProcess"><image id ="processImage" alt=''></div>
-
-</p>
-
+	<!-- script文件 -->
 
 	<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
 	<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
@@ -87,420 +91,242 @@
 	<script
 		src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 
-	<script type="text/javascript">
-  $(function(){
-	  init();
-  });//end jquery
- 
-  
-  
- var baseUrl='<%=basePath%>/';
-<%--  var baseUrl='<%=basePath%>rest/'; --%>
 
- //初始化按钮
- function init(){
-		$("#btnDeployMent").click(function(){DeployMent();});
-		$("#btnDeployMentWithZIP").click(function(){DeployMentWithZIP();});
-		$("#binStart").click(function(){startProcess();});
-		$("#findTask").click(function(){findTask();});
-		$("#completeTask").click(function(){completeTask();});
-		$("#findProcessDefinition").click(function(){findProcessDefinition();});
-		$("#findLastProcessDefinition").click(function(){findLastProcessDefinition();});
-		$("#deleteProcessDefinition").click(function(){deleteProcessDefinition();});
-		$("#deleteProcessDefinitionByKey").click(function(){deleteProcessDefinitionByKey();});
-		$("#queryProcessImage").click(function(){queryProcessImage();});
-		$("#isProcessEnd").click(function(){isProcessEnd();});
-		$("#findHistoryTask").click(function(){findHistoryTask();});
-		$("#findHistoryProcessInstance").click(function(){findHistoryProcessInstance();});
-	 
-		
-		
-		/* EclusiveGateWay Test */
-		
-		$("#deployment").click(function(){deployment();});
-		$("#startProcessInstance").click(function(){startProcessInstance();});
-		$("#getPersionalTaskMessage").click(function(){getPersionalTaskMessage();});
-		$("#completeMyPersonalTask").click(function(){completeMyPersonalTask();});
-		
-		
-		/* parallelGateWayTest */
-		
-		$("#parallelGatewayDeploymentProcess").click(function(){parallelGatewayDeploymentProcess();});
-		$("#parallelGatewayStartProcessInstance").click(function(){parallelGatewayStartProcessInstance();});
-		$("#parallelGatewayFindMyPersonalTask").click(function(){parallelGatewayFindMyPersonalTask();});
-		$("#parallelGatewayCompleteMyTask").click(function(){parallelGatewayCompleteMyTask();});
-		
-		
-		
-		
-		/* showProcess */
-		$("#showProcess").click(function(){showProcess();});
-		
-		
-		/* 
-		$("#btnDel").click(function(){delPerson()});
-		$("#btnUpdate").click(function(){updatePerson()});
-		$("#btnList").click(function(){listPerson()});
- */  }
- 
-  /* processDeployMent*/
- function DeployMent (){
-	  
-		$.ajax({
-			url: baseUrl + 'ac_deployMent',
-			type: 'GET',
-			dataType: 'json',
-			success:function(data){
-				alert("查询 get "+data.name+"  "+data.id);
-			},
-			error:function(data){
-				alert("error");
-			}
-			
-		})//end ajax
-	} 
+<script type="text/javascript" async="async">
 
-  /* processDeployMentWithZIP*/
- function DeployMentWithZIP (){
-	  
-		$.ajax({
-			url: baseUrl + 'ac_deployMentWithZIP',
-			type: 'GET',
-			dataType: 'json',
-			success:function(data){
-				alert("deployMentWithZIP  OK");
-			},
-			error:function(data){
-				alert("error");
-			}
-			
-		})//end ajax
-	} 
- 
-  /*启动流程*/
- function startProcess (){
-	 var person={id:1,name:'张三',sex:'男',age:23};
-	  
-	  $.ajax({
-			url: baseUrl + 'ac_startProcess',
-			type: 'POST',
-			dataType: 'json',
-			/* data: person, */
-			success:function(data){
-				alert("OK");
-			},
-			error:function(data){
-				alert("error");
-			}
-			
-		})//end ajax
-	} 
-  
-  
-  
- /*findTask*/
- function findTask (){
-		$.ajax({
-			url: baseUrl + 'ac_findTask',
-			type: 'DELETE',
-			dataType: 'json',
-			success:function(data){
-				alert("findTask  ok ");
-			},
-			error:function(data){
-				alert("error");
-			}
-			
-		})//end ajax
-	} 
- 
- /* completeTask */
- function completeTask (){
-    var  person = {id:221,name:'王五',sex:'男',age:23};
+        var baseUrl = '<%=basePath%>/';
+		var processInstanceId ="";
+		var shenPiRen = "";
+		var key = "handleLeaveProcess";
+		var taskId="";
+		var ProcessDescrible ="开始  -->";
 		
-		$.ajax({
-			url: baseUrl + 'ac_completeTask',
-			type: 'put',//注意在传参数时，加：_method:'PUT'　将对应后台的PUT请求方法
-			dataType: 'json',
-			/* data: person, */
-			success:function(data){
-				alert("completeTask ok ");
-			},
-			error:function(data){
-				alert("error");
-			}
-			
-		})//end ajax
-	} 
- 
- 
- 
- 
- 
- /*findProcessDefinition*/
- function findProcessDefinition(){
-		$.ajax({
-			url: baseUrl + 'ac_findProcessDefinition',
-			type: 'patch',
-			dataType: 'json',
-			/* data: {name:'张三'}, */
-			success:function(){
-				
-				alert("findProcessDefinition  ok");
-			
-			},
-			error:function(data){
-				alert("error");
-			}
-			
-		})//end ajax
-	} 
- 
- 
- /*findLastProcessDefinition*/
- function findLastProcessDefinition(){
-		$.ajax({
-			url: baseUrl + 'ac_findLastProcessDefinition',
-			type: 'patch',
-			dataType: 'json',
-			/* data: {name:'张三'}, */
-			success:function(){
-				
-				alert("findLastProcessDefinition  ok");
-			
-			},
-			error:function(data){
-				alert("error");
-			}
-			
-		})//end ajax
-	} 
+		
 
- /* deleteProcessDefinition */
- function deleteProcessDefinition(){
-	 
-	 $.ajax({
-		url : baseUrl + 'ac_deleteProcessDefinition',
-		type: 'POST',
-		success:function(data){
-			alert("deleteProcessDefinition  ok");
-		},
-		error:function(){
-			alert("deleteProcessDefinition  error");
+		$(function() {
+			$('#processDescribe').text("开始 -->");
+			init();
+		});//end function
+
+		/* 初始化函数 */
+		function init() {
+			/* 部署流程 */
+			deployMent();
+		
+			submit();
+		}//end function
+
+		/* 部署流程函数 */
+		function deployMent() {
+			$("#deployMent").click(function() {
+				$.ajax({
+					url : baseUrl + 'deployMent',
+					type : 'POST',
+					dataType : 'json',
+					success : function(data) {
+						alert("deployMent ok key =" + data.key);
+
+						key = data.key;
+						
+						$("#deployMent").hide();
+					},
+					error : function() {
+						alert("deployMent error");
+					}
+				});//end ajax
+
+			});//end click
+
+		}//end function
+
+		function submit() {
+
+			$("#submit").click(function() {
+				$.ajax({
+					url : baseUrl + 'startProcessAndEndFirstTask',
+					type : 'POST',
+					dataType : 'json',
+					data : {
+						name : $("#name").val(),
+						day : $("#day").val(),
+						key :key
+					},
+					success : function(data) {
+						//alert("ok processInstanceId = "+data.processInstanceId);
+						processInstanceId = data.processInstanceId;
+						
+						/* 更新流程描述区域 */
+						/* updateProcessDescrible(data.assigine); */
+						
+						//隐藏表单
+						$("div[class='form']").hide();
+
+						/*显示审批人信息 */
+						showHandlePeople();
+						
+						/* 添加流程图元素并显示流程进度*/
+						addProcessImgElement();
+						
+						
+						/* 更新流程描述 */
+						/* updateProcessDescrible($('#name').val()); */
+
+					},
+					error : function() {
+						alert("error");
+					}
+
+				});//end ajax
+			});//end click
+		}//end submit	
+
+		/* 更新流程描述区域 */
+		function updateProcessDescrible(assigine){
+           
+			if('null'==assigine){
+				ProcessDescrible +="结束 ";
+           }else{
+				ProcessDescrible +=assigine +" --> ";
+           }
+			
+			$('#processDescribe').text(ProcessDescrible);
+			
+		}//end function
+		
+		
+		
+		/*显示审批人信息 */
+		function showHandlePeople() {
+			
+			//alert("addActiv processInstanceId ="+processInstanceId);	
+  			$.ajax({
+  				url:baseUrl+'showHandlePeople',
+  				type:'POST',
+  				dataType:'json',
+  				data:{processInstanceId : processInstanceId},
+  				success:function(data){
+  					/* alert("showHandlePeople ok assiginee ="+data.assiginee+" taskId ="+data.taskId); */
+   					//设置全局变量的值			
+  					shenPiRen = data.assiginee;
+   					
+   				    taskId = data.taskId;
+
+   				  /* 添加审批按钮元素 */
+   				   addHandleButton();			    
+   	
+					
+					/* 更新流程描述 */
+					 updateProcessDescrible(shenPiRen);  
+
+   				  
+   				  
+   				  /* 为按钮添加点击事件 */
+	  			  $("#handleButton").click(function(){
+					
+	  				  /* 结束当前任务 */
+					  compeletTask();
+	  				  
+	  			  });//end click
+
+	  			  
+	  			  
+	  			  
+	  			  
+	  			  
+  				},
+  				error:function(){alert("showHandlePeople error");}
+  				
+  			});//end ajax
+  			
+	}//end function
+	
+	//添加审批按钮
+
+	function addHandleButton() {
+		var str;
+
+		if ('系统' == shenPiRen || '员工wbliu' == shenPiRen) {
+			str = '<p id ="radioGroup">'
+					+ shenPiRen
+					+ ' 处理'
+					+ '<input   id ="handleButton"   type ="button" class="btn btn-success" value = "提交" /></p>';
+
+		}else if('null' == shenPiRen){
+		
+			str = '<p id ="radioGroup">'
+					+ '<h2>流程处理结束！</h2>'
+					+ '</p>';
+			
+					
+					/* 隐藏进度图显示 */
+					$('#ProcessImage').hide();
+			
+		}else {
+			str = '<p id ="radioGroup">'
+					+ shenPiRen
+					+ ' 审批意见:'
+					+ '<label class="checkbox-inline">'
+					+ '<input type="radio" name="optionsRadiosinline" id="optionsRadios3" value="option1" checked>同意'
+					+ '</label>'
+					+ '<label class="checkbox-inline">'
+					+ '<input type="radio" name="optionsRadiosinline" id="optionsRadios4" value="option2">不同意'
+					+ '</label>'
+					+ '<input   id ="handleButton"   type ="button" class="btn btn-success" value = "提交" /></p>';
 		}
-	 });
-			 
- }
- 
- /* deleteProcessDefinitionByKey */
- function deleteProcessDefinitionByKey(){
-	 $.ajax({
-		 url :baseUrl + 'ac_deleteProcessDefinitionByKey' ,
-		 type: 'POST',
-		 success :function(data){ alert("deleteProcessDefinitionByKey ok");},
-		 error: function(){alert("deleteProcessDefinitionByKey error");}
-	 });
- }
- 
- /* queryProcessImagemyProcess */
- function queryProcessImage(){
-	 $.ajax({
-		 url: baseUrl+'ac_queryProcessImage',
-		 type :'POST',
-		 success :function(data){alert("queryProcessImgae ok");},
-		 errror :function(){alert("queryProcessImage error");}
-	 });
- }
- 
-  /* isProcessEnd */
-  function isProcessEnd(){
-	  $.ajax({
-		  url:baseUrl+'ac_isProcessEnd',
-		  type :'POST',
-		  suceess: function(data){alert("isProcessEnd ok");},
-		  error: function(){alert("isProcessEnd erro");}
-		  
-	  });
-	  
-	  
-	  
-	  
-  }
-  
-  /* findHistoryTask */
-  function findHistoryTask(){
-	  $.ajax({
-		  url:baseUrl+'ac_findHistoryTask',
-		  type :'POST',
-		  success:function(data){alter("findHistoryTask ok");},
-		  error:function(){alter("findHistoryTask error");}
-	  });
-  }
-  
-  
-  
-  /* findHistoryProcessInstance */
-  function findHistoryProcessInstance(){
-	  $.ajax({
-		  url:baseUrl+'ac_findHistoryProcessInstance',
-		  type : 'POST',
-		  success:function(data){alert("findHistoryProcessInstance ok");},
-		  error:function(){alert("findHistoryProcessInstance error ");}
-	  });
-	  
-  }//end function
-  
-  
-  /* ExclusiveGateWay Test */
-  
-  
-  /* deployment */
-  function deployment(){
-	  $.ajax({
-		  url:baseUrl+'ac_ExclusiveGateWayDeployment',
-		  type :'POST',
-		  success:function(data){alert("ExclusiveGateWayDeployment  ok");},
-		  error:function(){alert("ExclusiveGateWayDeployment  error");}
-	  });
-  }//end function
-  
-  
-  /* startProcessInstance */
-  function startProcessInstance(){
-	  $.ajax({
-		  url:baseUrl+'ac_ExclusiveGateWayStartProcessInstance',
-		  type :'POST',
-		  success:function(data){alert("ExclusiveGateWayStartProcessInstance  ok");},
-		  error:function(){alert("ExclusiveGateWayStartProcessInstance  error");}
-	  });
-  }//end function
-  
-  
-  
-  /* get persionalTaskMessage */
-  function getPersionalTaskMessage(){
-	  $.ajax({
-		  url:baseUrl+'ac_getPersionalTaskMessage',
-		  type:'POST',
-		  success:function(data){alert("getPersionalTaskMessage..... ok");},
-		  error:function(){alert("getPersionalTaskMessage..... error");}
-		  
-		  
-	  });
-	  
-	  
-	  
-	  
-  }//end function
-  
-  
-  /* completeMyPersonalTask */
-  function completeMyPersonalTask(){
-	  $.ajax({
-		  url:baseUrl+'ac_completeMyPersonalTask',
-		  type:'POST',
-		  success :function(data){alert("completeMyPersonalTask ......ok");},
-		  error :function(){alert("completeMyPersonalTask ......error");}
-	  });
-	  
-	  
-	  
-  }//end function
-  
-  
-  
- 
-  
-  
-  
- /* parallelGetway */
 
- /* deloymentProcess */
- 
-function parallelGatewayDeploymentProcess(){
- $.ajax({
-	 url:baseUrl+'ac_parallelGatewayDeploymentProcess',
-	 type:'POST',
-	 success:function (data){alert("parallelGateway.....ok");},
-	 error:function (){alert("parallelGateway.....error");}
- });	  
-	  
-	  
-	  
-  }//end function
- 
- 
-  /* parallelGatewayStartProcessInstance */
-  function parallelGatewayStartProcessInstance(){
-	  $.ajax({
-		  url:baseUrl+'ac_parallelGatewayStartProcessInstance',
-		  type:'POST',
-		  success:function(data){alert("parallelGatewayStartProcessInstance .....ok");},
-		  error:function(data){alert("parallelGatewayStartProcessInstance .....error");},
-		  
-		  
-		  
-	  });
-	  
-	  
-	  
-  }//end function
-  
-  
-  /* parallelGatewayFindMyPersonalTask */
-  function parallelGatewayFindMyPersonalTask(){
-	  $.ajax({
-		  url:baseUrl+'ac_parallelGatewayFindMyPersonalTask',
-		  type:'POST',
-		  success:function(data){alert("parallelGatewayFindMyPersonalTask...ok");},
-		  error:function(){alert("parallelGatewayFindMyPersonalTask...error");}
-		  
-		  
-	  });
-	  
-	  
-	  
-	  
-	  
-  }//end function
-  
-  /* parallelGatewayCompleteMyTask */
-  function parallelGatewayCompleteMyTask(){
-	  $.ajax({
-		  url:baseUrl+'ac_parallelGatewayCompleteMyTask',
-		  type :'POST',
-		  success:function(data){alert("parallelGatewayCompleteMyTask...ok");},
-		  error:function(){alert("parallelGatewayCompleteMyTask...error");}
-		  
-	  });
-  }//end function
+		
+		$("#shenPi").html(str);
+	}//end function
 
-  
-  
-  /* showProcess */
-  function showProcess(){
+	/* 结束当前任务 */
+	function compeletTask() {
+		$.ajax({
+			url : baseUrl + 'completeTask',
+			type : 'POST',
+			dataType : 'json',
+			data : {
+				'taskId' : taskId,
+				'processInstanceId' : processInstanceId
+			},
+			success : function(data) {
+				//显示当前任务的审批信息		
+				showHandlePeople();
 
-	  $("#processImage").attr('src',baseUrl+'ac_showProcess');
-	  
-	  
-	  
-	  /* 	  
-	  $.ajax({
-		 url:baseUrl+'ac_showProcess',
-         type :'POST',
-         dataType:'json',
-         success :function(data){
-        	  alert("showProcess.....ok filePath ="+data);
-        	  
-         },
-         error :function(data){alert("showProcess.....error");}
-		  
-	  });
- */	  
-	  
-  }//end function
-  
-  
- </script>
+				//设置src的值
+				changeImgSrc();
+			},
+			error : function() {
+				alert("completeTask ok");
+			}
+		});//end ajax
+
+	}//end function
+
+	/*添加流程图元素*/
+	function addProcessImgElement() {
+		//$("#ProcessImage").empty();
+		var imgTemp = "<img alt ='流程进度图' id='imgProcess' >";
+		//add img element into html element
+		$("#ProcessImage").html(imgTemp);
+
+		//设置src的值    
+		changeImgSrc();
+	}//end fuction
+
+	/* 设置img的src属性 */
+	function changeImgSrc() {
+	
+		if('null'==shenPiRen){
+	          return ;			
+		}
+		
+		var src = baseUrl + "/showProcess?processInstanceId="
+				+ processInstanceId + "&&num=" + Math.random();
+		$('#imgProcess').attr("src", src);
+		
+	
+	}//end function
+</script>
 </body>
+
 </html>

@@ -1,8 +1,6 @@
 package com.wbliu.SSM002.controller;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -12,14 +10,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipInputStream;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.engine.HistoryService;
 import org.activiti.engine.ProcessEngine;
-import org.activiti.engine.ProcessEngines;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
@@ -40,31 +36,23 @@ import org.activiti.image.ProcessDiagramGenerator;
 import org.activiti.image.impl.DefaultProcessDiagramGenerator;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
-import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.wbliu.SSM002.activiti.HelloActiviti;
-import com.wbliu.SSM002.beans.UserBean;
-import com.wbliu.SSM002.service.ILoginService;
-import com.wbliu.SSM002.service.IactivitiService;
-
 @Controller
+
 public class LoginController {
 	private Logger log = Logger.getLogger(this.getClass());
 
-	@Autowired
 	// private IactivitiService activitiService;
 
 	private ApplicationContext ac = new FileSystemXmlApplicationContext(
-			"E:/WbliuWorkSpace/SM002/src/applicationContext.xml");
+			"E:/WbliuWorkSpace/SSM002_activitiTest/src/applicationContext.xml");
 	private RepositoryService repositoryService = (RepositoryService) ac.getBean("repositoryService");
 
 	private RuntimeService runtimeService = (RuntimeService) ac.getBean("runtimeService");
@@ -93,7 +81,7 @@ public class LoginController {
 	public void deployWithZIP() {
 		log.info("deployWithZIP------");
 
-		String processZipPath = "com/wbliu/SSM002/activiti/diagrams/leaveProcess.zip";
+		String processZipPath = "com/wbliu/SSM002_activitiTest/activiti/diagrams/leaveProcess.zip";
 		System.out.println("processZipPath = " + processZipPath);
 		InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(processZipPath);
 
@@ -750,4 +738,349 @@ public class LoginController {
 		}
 		return highFlows;
 	}
+	
+	
+	
+	
+	
+	/*请假审批流程演示*/
+	
+	
+	/*部署流程*/
+	@RequestMapping("ac_deploymentProcess")
+	@ResponseBody
+	public ModelAndView ac_deploymentProcess(){
+		log.info("ac_deploymentProcess............");
+		ModelAndView mv = new ModelAndView("index");
+		Map map = new HashMap();
+
+	  InputStream inputStream_bpmn = this.getClass().getClassLoader().getResourceAsStream("/diagrams/activitiDagram001.bpmn");
+	  InputStream inputStream_png = this.getClass().getClassLoader().getResourceAsStream("/diagrams/activitiDagram001.png");
+		
+		
+	  Deployment deployment = repositoryService.createDeployment()
+			  .addInputStream("activitiDagram001.bpmn", inputStream_bpmn)
+		      .addInputStream("activitiDagram001.png", inputStream_png)
+		      .name("activitiDagram001")
+		      .deploy();
+
+		
+	  if(deployment!=null){
+		  
+		System.out.println("deploymentId = "+deployment.getId());
+		System.out.println("name = "+deployment.getName());
+		System.out.println("DeploymentTime = "+deployment.getDeploymentTime());
+		map.put("deploymentKey", deployment.getName());
+	  }else{
+		  map.put("deploymentKey", "123");
+	  }
+		
+		mv.addObject("map", map);
+		return mv;
+	}//end function
+	
+	/*启动流程*/
+	
+	/*ac_startProcess2*/
+	@RequestMapping("ac_startProcess2")
+	@ResponseBody
+	public String ac_startProcess2(String deploymentKey){
+		log.info("ac_startProcess.....deploymentKey = "+deploymentKey);
+		String processInstanceId ="123";
+		
+		ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(deploymentKey);
+		if(processInstance!=null){
+			System.out.println("ProcessInstanceId ="+processInstance.getProcessInstanceId());
+			System.out.println("ProcessDefinitionKey ="+processInstance.getProcessDefinitionKey());
+			System.out.println("ProcessDefinitionVersion ="+processInstance.getProcessDefinitionVersion());
+			System.out.println("Name ="+processInstance.getName());
+		
+		  processInstanceId =processInstance.getProcessInstanceId();
+		}
+		return processInstanceId;
+	}//end function
+
+
+	/*员工wbliu请假*/
+	@RequestMapping("ac_wbliu")
+	public String ac_wbliu(String assigneName,String processInstanceId){
+		log.info("ac_wbliu....");
+		String taskId ="123";
+		System.out.println("assigneName = "+assigneName+"  processInstansceId ="+processInstanceId);
+		
+		
+		List<Task> taskList = taskService.createTaskQuery()
+				.taskAssignee(assigneName)
+				.processInstanceId(processInstanceId)
+				.orderByTaskCreateTime().asc()
+				.list();
+
+		if(taskList!=null &&taskList.size() > 0){
+			for(Task task : taskList){
+				
+				System.out.println("Assignee = "+task.getAssignee());
+				System.out.println("ProcessInstanceId = "+task.getProcessInstanceId());
+				System.out.println("CreateTime = "+task.getCreateTime());
+				System.out.println("Id = "+task.getId());
+
+				if(task.getAssignee().equals(assigneName)){
+					System.out.println("员工wbliu，将要请假...+id ="+task.getId());
+					
+					/*设置变量的值*/
+					Map variableMap = new HashMap<String,Object>();
+					variableMap.put("day", 3);
+					
+
+					taskService.complete(task.getId(), variableMap);
+					
+				}else{
+					continue;
+				}
+			}
+		}
+		
+		
+		return taskId;
+	}//end function
+
+	
+	/*事业部主任_小李*/
+	@RequestMapping("ac_xiaoLi")
+	public String ac_xiaoLi(String assigineeName,String processInstanceId){
+		log.info("ac_xiaoLi....");
+		String taskId ="123";
+		System.out.println("assigineeName = "+assigineeName+"  processInstansceId ="+processInstanceId);
+		List<Task> taskList = taskService.createTaskQuery()
+				.taskAssignee(assigineeName)
+				.processInstanceId(processInstanceId)
+				.orderByTaskCreateTime().asc()
+				.list();
+		
+		if(taskList!=null &&taskList.size() > 0){
+			for(Task task : taskList){
+				
+				System.out.println("Assignee = "+task.getAssignee());
+				System.out.println("ProcessInstanceId = "+task.getProcessInstanceId());
+				System.out.println("CreateTime = "+task.getCreateTime());
+				System.out.println("Id = "+task.getId());
+				
+				if(task.getAssignee().equals(assigineeName)){
+					System.out.println("事业部主任_小李，将要审批...+id ="+task.getId());
+					
+					taskId = task.getId();
+					taskService.complete(taskId);
+					
+				}else{
+					continue;
+				}
+			}
+		}
+		
+		
+		return taskId;
+	}//end function
+	
+	
+	/*副所长_小刘审批*/
+	@RequestMapping("ac_xiaoLiu")
+	public Map ac_xiaoLiu(String assigneName,String processInstanceId){
+		log.info("ac_xiaoLiu....");
+		
+		Map<String,String> returnMap = new HashMap<String,String>();
+		
+		String taskId ="123";
+		System.out.println("assigneName = "+assigneName+"  processInstansceId ="+processInstanceId);
+		
+		
+		List<Task> taskList = taskService.createTaskQuery()
+				.taskAssignee(assigneName)
+				.processInstanceId(processInstanceId)
+				.orderByTaskCreateTime().asc()
+				.list();
+		
+		if(taskList!=null &&taskList.size() > 0){
+			for(Task task : taskList){
+				
+				System.out.println("Assignee = "+task.getAssignee());
+				System.out.println("ProcessInstanceId = "+task.getProcessInstanceId());
+				System.out.println("CreateTime = "+task.getCreateTime());
+				System.out.println("Id = "+task.getId());
+				
+				if(task.getAssignee().equals(assigneName)){
+					System.out.println("副所长——小刘将要审批，...+id ="+task.getId());
+					taskId = task.getId();
+					//int day  = (int) taskService.getVariable(processInstanceId, "day");
+
+					//System.out.println("-----员工wbliu请假"+day+"天，副所长小刘已经审批了-----");
+					
+					returnMap.put("taskId", taskId);
+					returnMap.put("day", 3+"");
+				
+					/*	设置变量的值*/
+					taskService.complete(taskId);
+				}else{
+					continue;
+				}
+			}
+		}
+		
+		return returnMap;
+	}//end function
+	
+	/*所长_老赵审批*/
+	@RequestMapping("ac_LaoZhao")
+	public Map ac_LaoZhao(String assigneName,String processInstanceId){
+		log.info("ac_LaoZhao....");
+		
+		Map<String,String> returnMap = new HashMap<String,String>();
+		
+		String taskId ="123";
+		System.out.println("assigneName = "+assigneName+"  processInstansceId ="+processInstanceId);
+		
+		
+		List<Task> taskList = taskService.createTaskQuery()
+				.taskAssignee(assigneName)
+				.processInstanceId(processInstanceId)
+				.orderByTaskCreateTime().asc()
+				.list();
+		
+		if(taskList!=null &&taskList.size() > 0){
+			for(Task task : taskList){
+				
+				System.out.println("Assignee = "+task.getAssignee());
+				System.out.println("ProcessInstanceId = "+task.getProcessInstanceId());
+				System.out.println("CreateTime = "+task.getCreateTime());
+				System.out.println("Id = "+task.getId());
+				
+				if(task.getAssignee().equals(assigneName)){
+					System.out.println("所长——老赵将要审批，...+id ="+task.getId());
+					taskId = task.getId();
+					//int day  = (int) taskService.getVariable(processInstanceId, "day");
+					
+					//System.out.println("-----员工wbliu请假"+day+"天，副所长小刘已经审批了-----");
+					
+					returnMap.put("taskId", taskId);
+					returnMap.put("day", 3+"");
+					
+					/*	设置变量的值*/
+					taskService.complete(taskId);
+				}else{
+					continue;
+				}
+			}
+		}
+		
+		return returnMap;
+	}//end function
+	
+	
+	
+	
+	
+
+	
+	/*获取审批流程的进度*/
+	
+	@RequestMapping("ac_showProcess2")
+	public void ac_showProcess(HttpServletRequest request, HttpServletResponse response,String processInstanceId) {
+	
+		log.info("showProcess2 ......");
+		// 设置页面不缓存
+		response.setHeader("Pragma", "No-cache");
+		response.setHeader("Cache-Control", "no-cache");
+		response.setDateHeader("Expires", 0);
+
+		try {
+			// 获取流程实例ID
+			/*
+			 * String instanceId =
+			 * ServletRequestUtils.getStringParameter(request, "instanceId",
+			 * "");
+			 */
+			String instanceId = "57505";
+			if(processInstanceId!=null){
+				instanceId = processInstanceId;
+			}
+
+			System.out.println("instansceId = "+instanceId);
+			// 获取流程实例
+			ProcessInstance processInstance = runtimeService.createProcessInstanceQuery()
+					.processInstanceId(instanceId)
+					.active()
+					.singleResult();
+
+			
+			
+			if (processInstance == null) {
+				
+				throw new Exception("获取流程异常");
+			} else {
+
+				BpmnModel bpmnModel = repositoryService.getBpmnModel(processInstance.getProcessDefinitionId());
+
+				List<HistoricActivityInstance> activityInstances = historyService.createHistoricActivityInstanceQuery()
+												.processInstanceId(instanceId)
+												.orderByHistoricActivityInstanceStartTime().asc()
+												.list();
+
+				List activitiIds = new ArrayList();
+				List flowIds = new ArrayList();
+
+				ProcessDefinitionEntity processDefinition = (ProcessDefinitionEntity) ((RepositoryServiceImpl) repositoryService)
+						.getDeployedProcessDefinition(processInstance.getProcessDefinitionId());
+
+				flowIds = getHighLightedFlows(processDefinition, activityInstances);// 获取流程走过的线
+																					// (getHighLightedFlows是下面的方法)
+
+				for (HistoricActivityInstance hai : activityInstances) {
+					activitiIds.add(hai.getActivityId());// 获取流程走过的节点
+				}
+
+				// 设置图片的字体
+				ProcessEngineImpl defaultProcessEngine = (ProcessEngineImpl) processEngine;
+				// ProcessEngines.getDefaultProcessEngine();
+
+				defaultProcessEngine.getProcessEngineConfiguration().setActivityFontName("宋体"); // 有中文的话防止图片中出现乱码，否则会显示类似于“□”这样的字
+				defaultProcessEngine.getProcessEngineConfiguration().setLabelFontName("宋体");
+
+				Context.setProcessEngineConfiguration(defaultProcessEngine.getProcessEngineConfiguration());
+
+				ProcessDiagramGenerator processDiagramGenerator = new DefaultProcessDiagramGenerator();
+
+				InputStream imageStream = processDiagramGenerator.generateDiagram(bpmnModel, 
+																					"png", 
+																					activitiIds, // activitiIds就是标亮走过的节点
+																					flowIds, // flowIds就是标亮走过的线
+																					defaultProcessEngine.getProcessEngineConfiguration().getActivityFontName(),
+																					defaultProcessEngine.getProcessEngineConfiguration().getLabelFontName(), 
+																					null, 
+																					1.0);
+				
+				response.setContentType("image/png");
+
+				OutputStream os = response.getOutputStream();
+
+				int bytesRead = 0;
+
+				byte[] buffer = new byte[8192];
+
+				while ((bytesRead = imageStream.read(buffer, 0, 8192)) != -1) {
+					os.write(buffer, 0, bytesRead);
+				
+				}
+                  
+				os.close();
+				imageStream.close();
+			}
+
+		} catch (Exception e) {
+			// TODO: handle exception
+			throw new RuntimeException("获取流程图异常!");
+		}
+
+	}//end function
+	
+	
+	
+	
 }

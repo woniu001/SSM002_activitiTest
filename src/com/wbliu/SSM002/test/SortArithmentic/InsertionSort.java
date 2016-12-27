@@ -5,10 +5,10 @@ package com.wbliu.SSM002.test.SortArithmentic;
  * */
 public class InsertionSort {
 
+ public static	int [] testA = {10,3,2,1,5,6,4};
 	
 	/*主函数*/
 	public static void main(String[] args) {
-        int [] testA = {10,3,2,1,5,6,4};
         
           /*直接排序*/
 /*      	int [] testB = insertionSort1(testA);*/	
@@ -83,7 +83,7 @@ public class InsertionSort {
 				 
 				temp =A[i]; 
 				
-				 for(j = i ;j >=1 && A[j-d] >temp ; j-=d){
+				 for(j = i ;j >0 && A[j-d] >temp ; j-=d){
 					 
 					 A[j] = A[j-d];
 					 

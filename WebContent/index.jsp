@@ -266,10 +266,10 @@
 					+ shenPiRen
 					+ ' 审批意见:'
 					+ '<label class="checkbox-inline">'
-					+ '<input type="radio" name="optionsRadiosinline" id="optionsRadios3" value="option1" checked>同意'
+					+ '<input type="radio" name="optionsRadiosinline" id="optionsRadios3" value="0" checked>同意'
 					+ '</label>'
 					+ '<label class="checkbox-inline">'
-					+ '<input type="radio" name="optionsRadiosinline" id="optionsRadios4" value="option2">不同意'
+					+ '<input type="radio" name="optionsRadiosinline" id="optionsRadios4" value="-1">不同意'
 					+ '</label>'
 					+ '<input   id ="handleButton"   type ="button" class="btn btn-success" value = "提交" /></p>';
 		}
@@ -280,13 +280,17 @@
 
 	/* 结束当前任务 */
 	function compeletTask() {
+		/* 获得单选的内容 */
+
 		$.ajax({
 			url : baseUrl + 'completeTask',
 			type : 'POST',
 			dataType : 'json',
 			data : {
-				'taskId' : taskId,
-				'processInstanceId' : processInstanceId
+			    taskId : taskId,
+				processInstanceId : processInstanceId,
+				radio : $('p input[name ="optionsRadiosinline"]:checked').val(),
+				day  : $("#day").val()
 			},
 			success : function(data) {
 				//显示当前任务的审批信息		
@@ -320,7 +324,7 @@
 	          return ;			
 		}
 		
-		var src = baseUrl + "/showProcess?processInstanceId="
+		var src = baseUrl + "showProcess?processInstanceId="
 				+ processInstanceId + "&&num=" + Math.random();
 		$('#imgProcess').attr("src", src);
 		

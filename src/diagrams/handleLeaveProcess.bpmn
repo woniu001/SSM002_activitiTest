@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
+  <process id="handleLeaveProcess" name="请假审批流程升级版" isExecutable="true">
+    <startEvent id="startevent1" name="开始"></startEvent>
+    <endEvent id="endevent1" name="结束"></endEvent>
+    <userTask id="usertask1" name="填写请假单" activiti:assignee="员工wbliu"></userTask>
+    <userTask id="usertask2" name="事业部主任审批" activiti:assignee="事业部主任_小李"></userTask>
+    <userTask id="usertask3" name="副所长审批" activiti:assignee="副所长_小刘"></userTask>
+    <userTask id="usertask4" name="所长审批" activiti:assignee="所长_老赵"></userTask>
+    <exclusiveGateway id="exclusivegateway1" name="Exclusive Gateway" default="默认事业部主任审批"></exclusiveGateway>
+    <exclusiveGateway id="exclusivegateway2" name="Exclusive Gateway" default="副所长默认同意"></exclusiveGateway>
+    <sequenceFlow id="flow1" sourceRef="startevent1" targetRef="usertask1"></sequenceFlow>
+    <sequenceFlow id="flow2" sourceRef="usertask1" targetRef="exclusivegateway1"></sequenceFlow>
+    <sequenceFlow id="默认事业部主任审批" name="请假天数 &lt;=1天" sourceRef="exclusivegateway1" targetRef="usertask2"></sequenceFlow>
+    <sequenceFlow id="flow7" sourceRef="usertask3" targetRef="exclusivegateway2"></sequenceFlow>
+    <sequenceFlow id="副所长默认同意" name="同意" sourceRef="exclusivegateway2" targetRef="usertask4"></sequenceFlow>
+    <sequenceFlow id="请假天数大于1天副所长审批" name="请假天数 &gt;1" sourceRef="exclusivegateway1" targetRef="usertask3">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${day >1}]]></conditionExpression>
+    </sequenceFlow>
+    <userTask id="usertask5" name="请假流程入库" activiti:assignee="系统"></userTask>
+    <exclusiveGateway id="exclusivegateway3" name="Exclusive Gateway" default="所长默认同意"></exclusiveGateway>
+    <sequenceFlow id="所长默认同意" name="同意" sourceRef="exclusivegateway3" targetRef="usertask5"></sequenceFlow>
+    <sequenceFlow id="flow14" sourceRef="usertask4" targetRef="exclusivegateway3"></sequenceFlow>
+    <sequenceFlow id="flow15" sourceRef="usertask5" targetRef="endevent1"></sequenceFlow>
+    <sequenceFlow id="f" sourceRef="usertask2" targetRef="exclusivegateway4"></sequenceFlow>
+    <exclusiveGateway id="exclusivegateway4" name="Exclusive Gateway" default="默认事业部主任同意"></exclusiveGateway>
+    <sequenceFlow id="默认事业部主任同意" name="同意" sourceRef="exclusivegateway4" targetRef="usertask5"></sequenceFlow>
+    <sequenceFlow id="副所长不同意" name="不同意" sourceRef="exclusivegateway2" targetRef="endevent1">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${handle1 < 0}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="所长不同意" name="不同意" sourceRef="exclusivegateway3" targetRef="endevent1">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${handle2 < 0}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="主任不同意" name="不同意" sourceRef="exclusivegateway4" targetRef="endevent1">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${handle0 < 0}]]></conditionExpression>
+    </sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_handleLeaveProcess">
+    <bpmndi:BPMNPlane bpmnElement="handleLeaveProcess" id="BPMNPlane_handleLeaveProcess">
+      <bpmndi:BPMNShape bpmnElement="startevent1" id="BPMNShape_startevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="0.0" y="296.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="955.0" y="295.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="usertask1" id="BPMNShape_usertask1">
+        <omgdc:Bounds height="55.0" width="105.0" x="120.0" y="286.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="usertask2" id="BPMNShape_usertask2">
+        <omgdc:Bounds height="55.0" width="105.0" x="447.0" y="286.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="usertask3" id="BPMNShape_usertask3">
+        <omgdc:Bounds height="55.0" width="105.0" x="268.0" y="140.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="usertask4" id="BPMNShape_usertask4">
+        <omgdc:Bounds height="55.0" width="105.0" x="620.0" y="140.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway1" id="BPMNShape_exclusivegateway1">
+        <omgdc:Bounds height="40.0" width="40.0" x="300.0" y="293.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway2" id="BPMNShape_exclusivegateway2">
+        <omgdc:Bounds height="40.0" width="40.0" x="479.0" y="147.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="usertask5" id="BPMNShape_usertask5">
+        <omgdc:Bounds height="55.0" width="105.0" x="788.0" y="285.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway3" id="BPMNShape_exclusivegateway3">
+        <omgdc:Bounds height="40.0" width="40.0" x="820.0" y="147.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway4" id="BPMNShape_exclusivegateway4">
+        <omgdc:Bounds height="40.0" width="40.0" x="639.0" y="293.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
+        <omgdi:waypoint x="35.0" y="313.0"></omgdi:waypoint>
+        <omgdi:waypoint x="120.0" y="313.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
+        <omgdi:waypoint x="225.0" y="313.0"></omgdi:waypoint>
+        <omgdi:waypoint x="300.0" y="313.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="默认事业部主任审批" id="BPMNEdge_默认事业部主任审批">
+        <omgdi:waypoint x="340.0" y="313.0"></omgdi:waypoint>
+        <omgdi:waypoint x="447.0" y="313.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="14.0" width="81.0" x="291.0" y="332.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow7" id="BPMNEdge_flow7">
+        <omgdi:waypoint x="373.0" y="167.0"></omgdi:waypoint>
+        <omgdi:waypoint x="479.0" y="167.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="副所长默认同意" id="BPMNEdge_副所长默认同意">
+        <omgdi:waypoint x="519.0" y="167.0"></omgdi:waypoint>
+        <omgdi:waypoint x="620.0" y="167.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="14.0" width="24.0" x="539.0" y="147.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="请假天数大于1天副所长审批" id="BPMNEdge_请假天数大于1天副所长审批">
+        <omgdi:waypoint x="320.0" y="293.0"></omgdi:waypoint>
+        <omgdi:waypoint x="320.0" y="195.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="14.0" width="63.0" x="289.0" y="251.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="所长默认同意" id="BPMNEdge_所长默认同意">
+        <omgdi:waypoint x="840.0" y="187.0"></omgdi:waypoint>
+        <omgdi:waypoint x="840.0" y="285.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="14.0" width="24.0" x="820.0" y="222.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow14" id="BPMNEdge_flow14">
+        <omgdi:waypoint x="725.0" y="167.0"></omgdi:waypoint>
+        <omgdi:waypoint x="820.0" y="167.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow15" id="BPMNEdge_flow15">
+        <omgdi:waypoint x="893.0" y="312.0"></omgdi:waypoint>
+        <omgdi:waypoint x="955.0" y="312.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="f" id="BPMNEdge_f">
+        <omgdi:waypoint x="552.0" y="313.0"></omgdi:waypoint>
+        <omgdi:waypoint x="639.0" y="313.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="默认事业部主任同意" id="BPMNEdge_默认事业部主任同意">
+        <omgdi:waypoint x="679.0" y="313.0"></omgdi:waypoint>
+        <omgdi:waypoint x="788.0" y="312.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="14.0" width="24.0" x="699.0" y="297.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="副所长不同意" id="BPMNEdge_副所长不同意">
+        <omgdi:waypoint x="499.0" y="147.0"></omgdi:waypoint>
+        <omgdi:waypoint x="499.0" y="58.0"></omgdi:waypoint>
+        <omgdi:waypoint x="972.0" y="58.0"></omgdi:waypoint>
+        <omgdi:waypoint x="972.0" y="295.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="14.0" width="100.0" x="650.0" y="51.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="所长不同意" id="BPMNEdge_所长不同意">
+        <omgdi:waypoint x="840.0" y="187.0"></omgdi:waypoint>
+        <omgdi:waypoint x="972.0" y="295.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="14.0" width="100.0" x="862.0" y="236.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="主任不同意" id="BPMNEdge_主任不同意">
+        <omgdi:waypoint x="659.0" y="333.0"></omgdi:waypoint>
+        <omgdi:waypoint x="659.0" y="455.0"></omgdi:waypoint>
+        <omgdi:waypoint x="972.0" y="455.0"></omgdi:waypoint>
+        <omgdi:waypoint x="972.0" y="330.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="14.0" width="100.0" x="830.0" y="439.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

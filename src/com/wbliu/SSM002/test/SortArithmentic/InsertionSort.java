@@ -70,41 +70,35 @@ public class InsertionSort {
 	/*希尔排序*/
 	
 	public static int [] shellSort(int [] A){
+	
+		int temp ,i,j;
 		
-		int temp,j,i;
-		
-		int n= A.length;
-		for(int D = n/2; D>1 ;D = D/2 ){
-
-			for(j = D ; j<n ; j++){
+		int n = A.length;
+		/*将数组进行递归分组*/
+		for(int d =n/2; d>1 ; d=d/2 ){
+			
+			
+			/*对每一个分组进行直接插入排序*/
+			for(i = d ;i <n ; i++){
+				 
+				temp =A[i]; 
 				
-				temp = A[j];
-				 for(i = j ; i >=D && A[i - D] >temp ; i-=D){
+				 for(j = i ;j >=1 && A[j-d] >temp ; j-=d){
 					 
-					 A[i] = A[i-D];
-					 
+					 A[j] = A[j-d];
 					 
 				 }//end for
 				
-				A[i] = temp;
-				
-			}//end for
-			
-			
-			
-			
+				A[j] = temp;
+
+			}//end for 
 			
 		}//end for
-		
-		
-		
-		
 		
 		
 		return A;
 	}//end function
 	
-	
-	
+		
 	
 }
